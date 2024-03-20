@@ -1,4 +1,4 @@
-# AR Interface for Network Simulation and Cyborg Interaction
+# AR Interface for Network Simulation and Cyber Operations Research Gym (CybORG) Interaction
 
 ## Project Description
 
