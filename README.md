@@ -1,4 +1,4 @@
-# <AR_Final_Project_Name>
+# AR Interface for Network Simulation and Cyborg Interaction
 
 ## Project Description
 
