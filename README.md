@@ -14,3 +14,5 @@ Data Integration: Implementing REST API calls to fetch real-time or historical C
 CybORG Data Visualization: Creating an intuitive AR interface that allows users to navigate and interact with 3D representations of CybORG game results, highlighting key metrics, attack vectors, and defense mechanisms within a cyber operations scenario.
 Adaptive Display for Detailed Analysis: The application will enable users to scale and manipulate the spatial visualization of game results, accommodating the need for detailed analysis without being constrained by the screen size limitations of iPhones and iPads.
 Research and Educational Impact: While the tool is designed to support cyber operations researchers in analyzing CybORG simulations, it also serves an educational purpose, demystifying complex cyber security concepts for students and professionals alike.
+
+![newplot](https://github.com/justinyeh1995/AR_Final_Project/assets/42970023/a95642d8-81fb-44f6-b24e-c06be1edaa6f)
