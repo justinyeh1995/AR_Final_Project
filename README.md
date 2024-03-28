@@ -10,6 +10,11 @@ AR Technology: Utilizing ARKit, with a focus on its advanced world tracking, pla
 Development Environment: Unity integrated with the ARKit plugin, offering a robust platform for building detailed AR visualizations that effectively convey the complexities of cyber operations research.
 Data Integration: Implementing REST API calls to fetch real-time or historical CybORG game results, ensuring the visualization accurately reflects the nuanced dynamics of cyber operations simulations.
 
+Technical Implementation in ARKit:
+- 3D Models for Nodes: Create or import 3D models to represent different types of nodes (servers, routers, workstations) in Unity.
+- ARKit Plane Detection: Use ARKit’s plane detection to place the network simulation on a flat surface, like a table or floor, allowing users to view it from a comfortable perspective.
+- Touch Gestures: Implement gesture recognition to allow users to interact with the network. Simple gestures like a tap could reveal more information, and pinch or swipe gestures could navigate through simulation steps or scale the visualization.
+
 ### 3. Project Scope:
 CybORG Data Visualization: Creating an intuitive AR interface that allows users to navigate and interact with 3D representations of CybORG game results, highlighting key metrics, attack vectors, and defense mechanisms within a cyber operations scenario.
 Adaptive Display for Detailed Analysis: The application will enable users to scale and manipulate the spatial visualization of game results, accommodating the need for detailed analysis without being constrained by the screen size limitations of iPhones and iPads.
