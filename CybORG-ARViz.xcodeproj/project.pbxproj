@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4411D90A2BBB45B10058BD76 /* ARViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4411D9092BBB45B10058BD76 /* ARViewContainer.swift */; };
+		4411D9102BBB54130058BD76 /* GraphWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4411D90F2BBB54130058BD76 /* GraphWrapper.swift */; };
 		443D90C22BBA2205008419FE /* CybORG_ARVizApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443D90C12BBA2205008419FE /* CybORG_ARVizApp.swift */; };
 		443D90C42BBA2205008419FE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443D90C32BBA2205008419FE /* ContentView.swift */; };
 		443D90C62BBA2208008419FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 443D90C52BBA2208008419FE /* Assets.xcassets */; };
@@ -34,6 +36,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4411D9092BBB45B10058BD76 /* ARViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewContainer.swift; sourceTree = "<group>"; };
+		4411D90F2BBB54130058BD76 /* GraphWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphWrapper.swift; sourceTree = "<group>"; };
+		4411D9112BBB5BFD0058BD76 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		443D90BE2BBA2205008419FE /* CybORG-ARViz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CybORG-ARViz.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		443D90C12BBA2205008419FE /* CybORG_ARVizApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CybORG_ARVizApp.swift; sourceTree = "<group>"; };
 		443D90C32BBA2205008419FE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -94,8 +99,11 @@
 		443D90C02BBA2205008419FE /* CybORG-ARViz */ = {
 			isa = PBXGroup;
 			children = (
+				4411D9112BBB5BFD0058BD76 /* Info.plist */,
 				443D90C12BBA2205008419FE /* CybORG_ARVizApp.swift */,
 				443D90C32BBA2205008419FE /* ContentView.swift */,
+				4411D9092BBB45B10058BD76 /* ARViewContainer.swift */,
+				4411D90F2BBB54130058BD76 /* GraphWrapper.swift */,
 				443D90C52BBA2208008419FE /* Assets.xcassets */,
 				443D90C72BBA2208008419FE /* Preview Content */,
 			);
@@ -258,7 +266,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				443D90C42BBA2205008419FE /* ContentView.swift in Sources */,
+				4411D9102BBB54130058BD76 /* GraphWrapper.swift in Sources */,
 				443D90C22BBA2205008419FE /* CybORG_ARVizApp.swift in Sources */,
+				4411D90A2BBB45B10058BD76 /* ARViewContainer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,6 +434,8 @@
 				DEVELOPMENT_ASSET_PATHS = "\"CybORG-ARViz/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "CybORG-ARViz/Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Used for AR Content - version $(MARKETING_VERSION)";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -452,6 +464,8 @@
 				DEVELOPMENT_ASSET_PATHS = "\"CybORG-ARViz/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "CybORG-ARViz/Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Used for AR Content - version $(MARKETING_VERSION)";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
