@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+struct GameResponse: Codable {
+    let game_id: String
+}
+
 struct ContentView: View {
     @State private var graphData: GraphWrapper?
     @State private var gameID: String?
@@ -64,11 +68,12 @@ func fetchStartGame () async -> String? {
                 print("Error: HTTP status code is not 200")
                 return nil
             }
-            print(response)
-            print(data)
-            let gameID = try JSONDecoder().decode(String.self, from: data)
-            print("Fetched Game ID: \(gameID)")
-            return gameID
+   
+            let gameResponse = try JSONDecoder().decode(GameResponse.self, from: data)
+
+            print("Fetched Game ID: \(gameResponse.game_id)")
+            return gameResponse.game_id
+            
         } catch {
             print("Networking or Decoding Error: \(error.localizedDescription)")
             return nil
