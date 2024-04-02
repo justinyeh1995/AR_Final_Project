@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var graphData: GraphWrapper?
-    @State private var gameID: Int?
+    @State private var gameID: String?
     @State private var isLoading = false
     
     var body: some View {
@@ -18,8 +18,11 @@ struct ContentView: View {
                 .edgesIgnoringSafeArea(.all)
             Button("Start CybORG Simulation") {
                 Task {
-                        self.gameID = await fetchStartGame()
-                    }
+                    isLoading = true
+                    let fetchedGameID = await fetchStartGame()
+                    gameID = fetchedGameID
+                    isLoading = false
+                }
             }
             Button("Next Step") {
             
@@ -31,16 +34,19 @@ struct ContentView: View {
             
             }
         }
-        if let gameID = gameID {
+        if isLoading {
+            ProgressView()
+        } else if let gameID = gameID {
             Text("Game ID: \(gameID)")
         } else {
             Text("No Game ID fetched yet")
         }
+
     }
 }
 
-func fetchStartGame () async -> Int? {
-        let urlString = "http://localhost:8000/api/game/"
+func fetchStartGame () async -> String? {
+        let urlString = "https://justinyeh1995.com/api/game/"
         guard let url = URL(string: urlString) else {
             print("Invalid URL")
             return nil
@@ -53,15 +59,14 @@ func fetchStartGame () async -> Int? {
         let body: [String: Any] = ["red_agent": "B_lineAgent", "step": 10, "blue_agent": "BlueRemove"]
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
-            print(request)
             let (data, response) = try await URLSession.shared.data(for: request)
-            print("hey")
             guard (response as? HTTPURLResponse)?.statusCode == 200 else {
                 print("Error: HTTP status code is not 200")
                 return nil
             }
-            
-            let gameID = try JSONDecoder().decode(Int.self, from: data)
+            print(response)
+            print(data)
+            let gameID = try JSONDecoder().decode(String.self, from: data)
             print("Fetched Game ID: \(gameID)")
             return gameID
         } catch {
