@@ -7,8 +7,12 @@
 
 import SwiftUI
 
-struct GameResponse: Codable {
+struct GameStartResponse: Codable {
     let game_id: String
+}
+
+struct GameEndResponse: Codable {
+    let message: String
 }
 
 struct ContentView: View {
@@ -29,13 +33,29 @@ struct ContentView: View {
                 }
             }
             Button("Next Step") {
-            
+                Task {
+                    if let networkDataResponse = await fetchGraphData(gameID: gameID) {
+                        // Process the networkDataResponse here
+                        print(networkDataResponse)
+                    } else {
+                        print("Failed to fetch network data.")
+                    }
+                }
             }
             Button("Previous Step") {
             
             }
             Button("End Simulation") {
-            
+                Task {
+                    // Call the API to end the game
+                    let message = await fetchEndGame(gameID: gameID)
+                    if message != nil {
+                        // Reset gameID only on successful API call
+                        DispatchQueue.main.async {
+                            self.gameID = nil
+                        }
+                    }
+                }
             }
         }
         if isLoading {
@@ -50,7 +70,9 @@ struct ContentView: View {
 }
 
 func fetchStartGame () async -> String? {
-        let urlString = "https://justinyeh1995.com/api/game/"
+//        let urlString = "https://justinyeh1995.com/api/game/"
+        let urlString = "http://localhost:8000/api/game/"
+
         guard let url = URL(string: urlString) else {
             print("Invalid URL")
             return nil
@@ -69,10 +91,10 @@ func fetchStartGame () async -> String? {
                 return nil
             }
    
-            let gameResponse = try JSONDecoder().decode(GameResponse.self, from: data)
+            let responseData = try JSONDecoder().decode(GameStartResponse.self, from: data)
 
-            print("Fetched Game ID: \(gameResponse.game_id)")
-            return gameResponse.game_id
+            print("Fetched Game ID: \(responseData.game_id)")
+            return responseData.game_id
             
         } catch {
             print("Networking or Decoding Error: \(error.localizedDescription)")
@@ -81,8 +103,90 @@ func fetchStartGame () async -> String? {
 }
 
 // Place your fetchGraphData function here
-func fetchGraphData(completion: @escaping (GraphWrapper?) -> Void) {
-    // Implementation...
+func fetchGraphData(gameID: String?) async -> GraphWrapper? {
+    guard let gameID = gameID else {
+        print("Start Game first")
+        return nil
+    }
+    
+//    let urlString = "https://justinyeh1995.com/api/game/" + gameID
+    let urlString = "http://localhost:8000/api/game/" + gameID
+
+    guard let url = URL(string: urlString) else {
+        print("Invalid URL")
+        return nil
+    }
+    
+    var request = URLRequest(url: url)
+    request.httpMethod = "POST"
+
+    do {
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            print("Error: HTTP status code is not 200")
+            return nil
+        }
+        
+        // Print the raw JSON string for debugging
+        if let jsonString = String(data: data, encoding: .utf8) {
+            print("Raw JSON string:\n\(jsonString)")
+        }
+        
+        // Directly decode using the 'data' received from the network request
+        do {
+            let decoder = JSONDecoder()
+            let responseData = try decoder.decode(GraphWrapper.self, from: data)
+            return responseData
+        } catch {
+            print("Decoding failed with error: \(error)")
+            return nil
+        }
+    } catch {
+        print("Networking or Decoding Error: \(error.localizedDescription)")
+        return nil
+    }
+}
+
+// Delete Game
+func fetchEndGame(gameID: String?) async -> String? {
+    guard let gameID = gameID else {
+        print("Start Game first")
+        return nil
+    }
+    
+//    let urlString = "https://justinyeh1995.com/api/game/" + gameID
+    let urlString = "http://localhost:8000/api/game/" + gameID
+
+    guard let url = URL(string: urlString) else {
+        print("Invalid URL")
+        return nil
+    }
+    
+    var request = URLRequest(url: url)
+    request.httpMethod = "DELETE"
+
+    do {
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            print("Error: HTTP status code is not 200")
+            return nil
+        }
+        
+        // Print the raw JSON string for debugging
+        if let jsonString = String(data: data, encoding: .utf8) {
+            print("Raw JSON string:\n\(jsonString)")
+        }
+        
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let responseData = try decoder.decode(GameEndResponse.self, from: data)
+        print("Deleted Game ID: \(gameID), message: \(responseData.message)")
+        return responseData.message
+        
+    } catch {
+        print("Networking or Decoding Error: \(error.localizedDescription)")
+        return nil
+    }
 }
 
 #Preview {
