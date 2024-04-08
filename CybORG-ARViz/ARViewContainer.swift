@@ -17,6 +17,13 @@ struct ARViewContainer: UIViewRepresentable {
     
     func makeUIView(context: Context) -> ARView {
         let arView = ARView(frame: .zero, cameraMode: .ar, automaticallyConfigureSession: true)
+        // Start AR session configuration here
+        let config = ARWorldTrackingConfiguration()
+        config.planeDetection = [.horizontal, .vertical] // Adjust based on your needs
+        arView.session.run(config)
+        
+        // Optionally, load and place your 3D models in the AR scene
+//        setupModels(in: arView)
         return arView
     }
     
@@ -41,5 +48,16 @@ struct ARViewContainer: UIViewRepresentable {
 //        // ...
 //        arView.scene.addAnchor(anchor)
     }
+    
+//    private func setupModels(in arView: ARView) {
+//        // Example of loading a 3D model named '3Dserver' from the app bundle and placing it in the AR scene
+//        if let serverAnchor = try? Entity.load(named: "3Dserver") {
+//            let anchor = AnchorEntity(plane: .horizontal)
+//            anchor.addChild(serverAnchor)
+//            arView.scene.addAnchor(anchor)
+//        }
+//        
+//        // Repeat the above steps for other models like '3Dlink' and '3Dagents', adjusting positions as needed
+//    }
 }
 
