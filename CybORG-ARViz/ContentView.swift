@@ -24,6 +24,13 @@ struct ContentView: View {
         VStack {
             ARViewContainer(graphData: graphData)
                 .edgesIgnoringSafeArea(.all)
+            if isLoading {
+                ProgressView()
+            } else if let gameID = gameID {
+                Text("Game ID: \(gameID)")
+            } else {
+                Text("No Game ID fetched yet")
+            }
             Button("Start CybORG Simulation") {
                 Task {
                     isLoading = true
@@ -57,13 +64,6 @@ struct ContentView: View {
                     }
                 }
             }
-        }
-        if isLoading {
-            ProgressView()
-        } else if let gameID = gameID {
-            Text("Game ID: \(gameID)")
-        } else {
-            Text("No Game ID fetched yet")
         }
 
     }
@@ -125,11 +125,6 @@ func fetchGraphData(gameID: String?) async -> GraphWrapper? {
         guard (response as? HTTPURLResponse)?.statusCode == 200 else {
             print("Error: HTTP status code is not 200")
             return nil
-        }
-        
-        // Print the raw JSON string for debugging
-        if let jsonString = String(data: data, encoding: .utf8) {
-            print("Raw JSON string:\n\(jsonString)")
         }
         
         // Directly decode using the 'data' received from the network request
