@@ -9,6 +9,14 @@ import SwiftUI
 import ARKit
 import RealityKit
 
+//extension MeshResource {
+//    static func generateLine(from start: SIMD3<Float>, to end: SIMD3<Float>, radius: Float) -> MeshResource {
+//        let length = distance(start, end)
+//        let cylinder = MeshResource.generateCylinder(radius: radius, height: length, radialSegments: 12)
+//        return cylinder
+//    }
+//}
+
 struct ARViewContainer: UIViewRepresentable {
     typealias UIViewType = ARView
     
@@ -17,47 +25,75 @@ struct ARViewContainer: UIViewRepresentable {
     
     func makeUIView(context: Context) -> ARView {
         let arView = ARView(frame: .zero, cameraMode: .ar, automaticallyConfigureSession: true)
+        arView.backgroundColor = .gray // Or any other noticeable color
+        arView.debugOptions = [.showFeaturePoints, .showWorldOrigin]
+
         // Start AR session configuration here
         let config = ARWorldTrackingConfiguration()
         config.planeDetection = [.horizontal, .vertical] // Adjust based on your needs
         arView.session.run(config)
+    
+        // Initial nodes and links creation
+        updateContent(for: arView, graphData: graphData)
         
-        // Optionally, load and place your 3D models in the AR scene
-//        setupModels(in: arView)
         return arView
     }
+
+    func updateUIView(_ view: ARView, context: Context) {
+        // Here, update the AR view with new or changed data
+        updateContent(for: view, graphData: graphData)
+    }
     
-    func updateUIView(_ uiView: ARView, context: Context) {
-        // Use graphData to update your AR scene
-        if let graphData = graphData {
-            // Clear existing anchors if any
-            uiView.scene.anchors.removeAll()
-            
-            // Setup the AR content with the new graph data
-//            setupGraphInView(arView: uiView, graphData: graphData)
+    private func updateContent(for arView: ARView, graphData: GraphWrapper?) {
+        // Remove all existing anchors to clear previous content
+        arView.scene.anchors.removeAll()
+
+        // Check and unwrap graphData
+        guard let graphData = graphData else { return }
+
+        print(graphData)
+        // Create and add new nodes and links
+        createNodes(in: arView, for: graphData.Blue)
+        // createLinks(in: arView, for: graphData.Blue) // Uncomment and implement createLinks if needed
+    }
+
+    private func createNodes(in arView: ARView, for graphDetails: GraphDetails) {
+        for node in graphDetails.link_diagram.nodes {
+            let sphere = ModelEntity(mesh: .generateSphere(radius: 0.3))
+            sphere.position = SIMD3<Float>(0, 0, -0.5) // @To-Do: design a placing algorithm
+
+            let anchorEntity = AnchorEntity(world: SIMD3<Float>(0, 0, -0.5)) // @To-Do: design a placing algorithm
+            anchorEntity.addChild(sphere)
+            arView.scene.addAnchor(anchorEntity)
+            sphere.name = node.id // Set the name of the sphere
         }
     }
-    
-    private func setupGraphInView(arView: ARView, graphData: GraphWrapper) {
-        // Here you would convert your graphData to 3D models and place them in the AR scene.
-        // This is a placeholder for where you would implement the visualization based on your graphData.
-        
-        // Example: Create an anchor and add entities to it
-//        let anchor = AnchorEntity(plane: .horizontal)
-//        // Add nodes and links as entities to the anchor
-//        // ...
-//        arView.scene.addAnchor(anchor)
-    }
-    
-//    private func setupModels(in arView: ARView) {
-//        // Example of loading a 3D model named '3Dserver' from the app bundle and placing it in the AR scene
-//        if let serverAnchor = try? Entity.load(named: "3Dserver") {
-//            let anchor = AnchorEntity(plane: .horizontal)
-//            anchor.addChild(serverAnchor)
-//            arView.scene.addAnchor(anchor)
+
+//    private func createLinks(in arView: ARView, for graphDetails: GraphDetails) {
+//        for link in graphDetails.link_diagram.links {
+//            guard let sourceNode = arView.scene.findEntity(named: link.source),
+//                  let targetNode = arView.scene.findEntity(named: link.target) else {
+//                continue
+//            }
+//            
+//            // Calculate the vector from source to target and its magnitude
+//            let direction = targetNode.position - sourceNode.position
+//            let length = simd_length(direction)
+//            
+//            // Create a cylinder to represent the line
+//            let lineEntity = ModelEntity(mesh: .generateLine(from: sourceNode.position, to: targetNode.position, radius: 0.005)) // Adjust radius as needed
+//            lineEntity.model?.materials = [SimpleMaterial(color: .red, isMetallic: false)]
+//            
+//            // Calculate midpoint for positioning
+//            let midpoint = (sourceNode.position + targetNode.position) / 2.0
+//            lineEntity.position = midpoint
+//            
+//            // Calculate rotation to align with the direction vector
+//            let rotation = simd_quatf(from: SIMD3<Float>(0, 0, 1), to: simd_normalize(direction))
+//            lineEntity.orientation = rotation
+//            
+//            arView.scene.addAnchor(AnchorEntity(world: lineEntity.position))
 //        }
-//        
-//        // Repeat the above steps for other models like '3Dlink' and '3Dagents', adjusting positions as needed
 //    }
 }
 
