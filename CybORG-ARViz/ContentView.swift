@@ -43,7 +43,7 @@ struct ContentView: View {
                 Task {
                     if let networkDataResponse = await fetchGraphData(gameID: gameID) {
                         // Process the networkDataResponse here
-                        print(networkDataResponse)
+                        graphData = networkDataResponse
                     } else {
                         print("Failed to fetch network data.")
                     }
@@ -62,6 +62,7 @@ struct ContentView: View {
                             self.gameID = nil
                         }
                     }
+                    graphData = nil // Clear graphData after backend responses
                 }
             }
         }
@@ -70,8 +71,8 @@ struct ContentView: View {
 }
 
 func fetchStartGame () async -> String? {
-//        let urlString = "https://justinyeh1995.com/api/game/"
-        let urlString = "http://localhost:8000/api/game/"
+        let urlString = "https://justinyeh1995.com/api/game/"
+        //let urlString = "http://localhost:8000/api/game/"
 
         guard let url = URL(string: urlString) else {
             print("Invalid URL")
@@ -109,8 +110,8 @@ func fetchGraphData(gameID: String?) async -> GraphWrapper? {
         return nil
     }
     
-//    let urlString = "https://justinyeh1995.com/api/game/" + gameID
-    let urlString = "http://localhost:8000/api/game/" + gameID
+    let urlString = "https://justinyeh1995.com/api/game/" + gameID
+    //let urlString = "http://localhost:8000/api/game/" + gameID
 
     guard let url = URL(string: urlString) else {
         print("Invalid URL")
@@ -149,8 +150,8 @@ func fetchEndGame(gameID: String?) async -> String? {
         return nil
     }
     
-//    let urlString = "https://justinyeh1995.com/api/game/" + gameID
-    let urlString = "http://localhost:8000/api/game/" + gameID
+    let urlString = "https://justinyeh1995.com/api/game/" + gameID
+    //let urlString = "http://localhost:8000/api/game/" + gameID
 
     guard let url = URL(string: urlString) else {
         print("Invalid URL")
@@ -175,6 +176,7 @@ func fetchEndGame(gameID: String?) async -> String? {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         let responseData = try decoder.decode(GameEndResponse.self, from: data)
+        
         print("Deleted Game ID: \(gameID), message: \(responseData.message)")
         return responseData.message
         
