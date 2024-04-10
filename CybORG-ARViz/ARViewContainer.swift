@@ -9,14 +9,7 @@ import SwiftUI
 import ARKit
 import RealityKit
 
-//extension MeshResource {
-//    static func generateLine(from start: SIMD3<Float>, to end: SIMD3<Float>, radius: Float) -> MeshResource {
-//        let length = distance(start, end)
-//        let cylinder = MeshResource.generateCylinder(radius: radius, height: length, radialSegments: 12)
-//        return cylinder
-//    }
-//}
-
+/// From ARKit
 struct ARViewContainer: UIViewRepresentable {
     typealias UIViewType = ARView
     
@@ -56,8 +49,8 @@ struct ARViewContainer: UIViewRepresentable {
             print("----> compromised hosts is:\n")
             print(graphData.Red.compromised_hosts)
             // Create and add new nodes and links
-            createNodes(in: arView, for: graphData.Blue)
-            // createLinks(in: arView, for: graphData.Blue) // Uncomment and implement createLinks if needed
+            createNodes(in: arView, for: graphData.Red)
+            createLinks(in: arView, for: graphData.Red)
         }
         else {
             print("empty graphData")
@@ -66,43 +59,113 @@ struct ARViewContainer: UIViewRepresentable {
 
     private func createNodes(in arView: ARView, for graphDetails: GraphDetails) {
         print("---> In createNodes")
-        for node in graphDetails.link_diagram.nodes {
-            let sphere = ModelEntity(mesh: .generateSphere(radius: 0.3))
-            sphere.position = SIMD3<Float>(0, 0, -0.5) // @To-Do: design a placing algorithm
-
-            let anchorEntity = AnchorEntity(world: SIMD3<Float>(0, 0, -0.5)) // @To-Do: design a placing algorithm
-            anchorEntity.addChild(sphere)
-            arView.scene.addAnchor(anchorEntity)
-            sphere.name = node.id // Set the name of the sphere
-            //print("Node id: \(node.id)")
+        let rowCount = Int(sqrt(Double(graphDetails.link_diagram.nodes.count)))
+        let spacing: Float = 0.5 // space between nodes
+        
+        for (index, node) in graphDetails.link_diagram.nodes.enumerated() {
+            let row = index / rowCount
+            let column = index % rowCount
+            
+            let x = Float(column) * spacing
+            let y = Float(row) * spacing
+            
+            let colorName = graphDetails.node_colors[index]
+            // Unwrap UIColor? first
+            if let nodeColor = UIColor.from(colorName: colorName) {
+                let sphere = ModelEntity(mesh: .generateSphere(radius: 0.05), materials: [SimpleMaterial(color: nodeColor, isMetallic: false)])
+                sphere.position = SIMD3<Float>(x - spacing * Float(rowCount) / 2, y - spacing * Float(rowCount) / 2, -1)// @To-Do: design a placing algorithm
+                
+                let anchorEntity = AnchorEntity(world: SIMD3<Float>(0, 0, 0)) // @To-Do: design a placing algorithm
+                anchorEntity.addChild(sphere)
+                arView.scene.addAnchor(anchorEntity)
+                sphere.name = node.id // Set the name of the sphere
+                //print("Node id: \(node.id)")
+            } else {
+                print("Could not find a matching color for name: \(graphDetails.node_colors[index])")
+            }
         }
     }
 
-//    private func createLinks(in arView: ARView, for graphDetails: GraphDetails) {
-//        for link in graphDetails.link_diagram.links {
-//            guard let sourceNode = arView.scene.findEntity(named: link.source),
-//                  let targetNode = arView.scene.findEntity(named: link.target) else {
-//                continue
-//            }
-//            
-//            // Calculate the vector from source to target and its magnitude
-//            let direction = targetNode.position - sourceNode.position
-//            let length = simd_length(direction)
-//            
-//            // Create a cylinder to represent the line
-//            let lineEntity = ModelEntity(mesh: .generateLine(from: sourceNode.position, to: targetNode.position, radius: 0.005)) // Adjust radius as needed
-//            lineEntity.model?.materials = [SimpleMaterial(color: .red, isMetallic: false)]
-//            
-//            // Calculate midpoint for positioning
-//            let midpoint = (sourceNode.position + targetNode.position) / 2.0
-//            lineEntity.position = midpoint
-//            
-//            // Calculate rotation to align with the direction vector
-//            let rotation = simd_quatf(from: SIMD3<Float>(0, 0, 1), to: simd_normalize(direction))
-//            lineEntity.orientation = rotation
-//            
-//            arView.scene.addAnchor(AnchorEntity(world: lineEntity.position))
-//        }
-//    }
+    // Example function to create a thin box to simulate a line
+    private func createLineEntity(from startPoint: SIMD3<Float>, to endPoint: SIMD3<Float>, thickness: Float) -> ModelEntity {
+        let length = simd_distance(startPoint, endPoint)
+        let direction = simd_normalize(endPoint - startPoint)
+        let midPoint = (startPoint + endPoint) / 2.0
+
+        let boxMesh = MeshResource.generateBox(width: thickness, height: thickness, depth: length)
+        let lineEntity = ModelEntity(mesh: boxMesh)
+        lineEntity.position = midPoint
+
+        // Calculate rotation to align the box with the direction vector
+        let rotation = simd_quatf(from: SIMD3<Float>(0, 0, 1), to: direction)
+        lineEntity.orientation = rotation
+
+        return lineEntity
+    }
+    
+    private func createLinks(in arView: ARView, for graphDetails: GraphDetails) {
+        for link in graphDetails.link_diagram.links {
+            guard let sourceNode = arView.scene.findEntity(named: link.source),
+                  let targetNode = arView.scene.findEntity(named: link.target) else {
+                continue
+            }
+            
+            // Get the positions of the source and target nodes
+            let sourcePosition = sourceNode.position
+            let targetPosition = targetNode.position
+            
+            // Create the line entity using the createLineEntity method
+            let lineThickness: Float = 0.005 // Adjust thickness as needed
+            let lineEntity = createLineEntity(from: sourcePosition, to: targetPosition, thickness: lineThickness)
+            
+            // Optionally, set the material color for the line
+            lineEntity.model?.materials = [SimpleMaterial(color: .red, isMetallic: false)]
+            
+            // Add the line entity to the scene by creating an anchor at the line's position
+            let anchorEntity = AnchorEntity(world: lineEntity.position)
+            anchorEntity.addChild(lineEntity)
+            arView.scene.addAnchor(anchorEntity)
+        }
+    }
 }
 
+extension UIColor {
+    // A utility function to get UIColor from predefined color names
+    static func from(colorName: String) -> UIColor? {
+        switch colorName.lowercased() {
+        case "red":
+            return UIColor.red
+        case "green":
+            return UIColor.green
+        case "blue":
+            return UIColor.blue
+        case "pink":
+            return UIColor.systemPink
+        case "orange":
+            return UIColor.orange
+        case "rosybrown":
+            return UIColor(red: 188/255, green: 143/255, blue: 143/255, alpha: 1.0) // RosyBrown as per standard RGB
+        default:
+            print("Unsupported color name: \(colorName). Returning nil.")
+            return nil
+        }
+    }
+}
+
+extension MeshResource {
+    /// Generates a very thin box standing vertically along the Y-axis.
+    static func generateLine(from start: SIMD3<Float>, to end: SIMD3<Float>, radius: Float) -> MeshResource {
+        // Calculate the distance between the start and end points to determine the depth of the box.
+        let distance = simd_distance(start, end)
+        
+        // Use a very small value for width and height to make the box thin, like a line.
+        let width = radius  // This will serve as the "thickness" of the line.
+        let height = radius // Same as width to ensure the line's thickness is uniform.
+        
+        // Generate a box with the desired dimensions.
+        // The depth of the box will be equal to the distance between the start and end points.
+        let line = MeshResource.generateBox(width: width, height: height, depth: distance)
+        
+        return line
+    }
+}
