@@ -41,23 +41,31 @@ struct ARViewContainer: UIViewRepresentable {
 
     func updateUIView(_ view: ARView, context: Context) {
         // Here, update the AR view with new or changed data
+        print("Graph Data Changed!")
         updateContent(for: view, graphData: graphData)
     }
     
     private func updateContent(for arView: ARView, graphData: GraphWrapper?) {
+        print("--> In updateContent:")
+
         // Remove all existing anchors to clear previous content
         arView.scene.anchors.removeAll()
 
         // Check and unwrap graphData
-        guard let graphData = graphData else { return }
-
-        print(graphData)
-        // Create and add new nodes and links
-        createNodes(in: arView, for: graphData.Blue)
-        // createLinks(in: arView, for: graphData.Blue) // Uncomment and implement createLinks if needed
+        if let graphData = graphData {
+            print("----> compromised hosts is:\n")
+            print(graphData.Red.compromised_hosts)
+            // Create and add new nodes and links
+            createNodes(in: arView, for: graphData.Blue)
+            // createLinks(in: arView, for: graphData.Blue) // Uncomment and implement createLinks if needed
+        }
+        else {
+            print("empty graphData")
+        }
     }
 
     private func createNodes(in arView: ARView, for graphDetails: GraphDetails) {
+        print("---> In createNodes")
         for node in graphDetails.link_diagram.nodes {
             let sphere = ModelEntity(mesh: .generateSphere(radius: 0.3))
             sphere.position = SIMD3<Float>(0, 0, -0.5) // @To-Do: design a placing algorithm
@@ -66,6 +74,7 @@ struct ARViewContainer: UIViewRepresentable {
             anchorEntity.addChild(sphere)
             arView.scene.addAnchor(anchorEntity)
             sphere.name = node.id // Set the name of the sphere
+            //print("Node id: \(node.id)")
         }
     }
 
