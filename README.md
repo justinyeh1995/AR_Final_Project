@@ -1,4 +1,4 @@
-# AR Interface for Network Simulation and Cyber Operations Research Gym (CybORG) Interaction
+# iOS App for Visualizing Network Simulation and Cyber Operations Research Gym (CybORG) Interaction
 
 ## Project Description
 
@@ -11,7 +11,8 @@ Development Environment: Unity integrated with the ARKit plugin, offering a robu
 Data Integration: Implementing REST API calls to fetch real-time or historical CybORG game results, ensuring the visualization accurately reflects the nuanced dynamics of cyber operations simulations.
 
 Technical Implementation in ARKit:
-- 3D Models for Nodes: Create or import 3D models to represent different types of nodes (servers, routers, workstations) in Unity.
+- Swift & SwitUI for iOS dev
+- RealityKit for 3D Models rendering.
 - ARKit Plane Detection: Use ARKit’s plane detection to place the network simulation on a flat surface, like a table or floor, allowing users to view it from a comfortable perspective.
 - Touch Gestures: Implement gesture recognition to allow users to interact with the network. Simple gestures like a tap could reveal more information, and pinch or swipe gestures could navigate through simulation steps or scale the visualization.
 
