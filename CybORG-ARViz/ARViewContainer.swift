@@ -74,7 +74,7 @@ struct ARViewContainer: UIViewRepresentable {
             if let nodeColor = UIColor.from(colorName: colorName) {
                 let sphere = ModelEntity(mesh: .generateSphere(radius: 0.05), materials: [SimpleMaterial(color: nodeColor, isMetallic: false)])
                 sphere.position = SIMD3<Float>(x - spacing * Float(rowCount) / 2, y - spacing * Float(rowCount) / 2, -1)// @To-Do: design a placing algorithm
-                
+                sphere.addTextLabel(text: node.id, position: SIMD3<Float>(0, 0.1, 0))
                 let anchorEntity = AnchorEntity(world: SIMD3<Float>(0, 0, 0)) // @To-Do: design a placing algorithm
                 anchorEntity.addChild(sphere)
                 arView.scene.addAnchor(anchorEntity)
@@ -114,6 +114,9 @@ struct ARViewContainer: UIViewRepresentable {
             let sourcePosition = sourceNode.position
             let targetPosition = targetNode.position
             
+            print("Start Point \(sourcePosition) - End Point \(targetPosition)")
+            
+            
             // Create the line entity using the createLineEntity method
             let lineThickness: Float = 0.005 // Adjust thickness as needed
             let lineEntity = createLineEntity(from: sourcePosition, to: targetPosition, thickness: lineThickness)
@@ -126,6 +129,29 @@ struct ARViewContainer: UIViewRepresentable {
             anchorEntity.addChild(lineEntity)
             arView.scene.addAnchor(anchorEntity)
         }
+    }
+}
+
+extension Entity {
+    /// Creates and returns a text entity.
+    func createTextEntity(text: String, color: UIColor = .white) -> ModelEntity {
+        let mesh = MeshResource.generateText(
+            text,
+            extrusionDepth: 0.01,
+            font: .systemFont(ofSize: 0.04),
+            containerFrame: CGRect.zero,
+            alignment: .center,
+            lineBreakMode: .byCharWrapping
+        )
+        let material = SimpleMaterial(color: color, isMetallic: true)
+        return ModelEntity(mesh: mesh, materials: [material])
+    }
+
+    /// Adds a text label as a child to the entity.
+    func addTextLabel(text: String, position: SIMD3<Float>) {
+        let textEntity = createTextEntity(text: text)
+        textEntity.position = position
+        self.addChild(textEntity)
     }
 }
 
