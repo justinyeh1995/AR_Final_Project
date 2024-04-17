@@ -21,6 +21,13 @@ struct Link: Codable {
     let target: String
 }
 
+struct NodePosition: Codable {
+    let id: String
+    let x: Float
+    let y: Float
+    let z: Float
+}
+
 struct ActionInfo: Codable {
     let action: String
     let success: String
@@ -33,6 +40,7 @@ struct Border: Codable {
 
 struct GraphDetails: Codable {
     let link_diagram: NetworkGraph
+    let node_positions: [NodePosition]
     let node_colors: [String]
     let node_borders: [Border]
     let compromised_hosts: [String]
@@ -47,25 +55,3 @@ struct GraphWrapper: Codable {
     let Red: GraphDetails
 }
 
-
-//struct NetworkDataResponse: Codable {
-//    let Blue: BlueData
-//    let Red: RedData
-//    // Include other top-level fields as necessary
-//
-//    struct BlueData: Codable {
-//        let link_diagram: LinkDiagram
-//        let node_colors: [String]
-//        let node_borders: [Border]
-//        let compromised_hosts: [String]
-//        let host_info: [String]
-//        let action_info: ActionInfo
-//        let host_map: [String: String]
-//    }
-//
-//    struct RedData: Codable {
-//        // Similar structure to BlueData
-//    }
-//
-//    // Definitions for LinkDiagram, Border, ActionInfo, etc.
-//}
