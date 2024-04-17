@@ -71,16 +71,19 @@ struct ARViewContainer: UIViewRepresentable {
             let y = Float(row) * spacing
             
             let colorName = graphDetails.node_colors[index]
+            let nodePosition = graphDetails.node_positions[index]
+
+            print("Node ID: \(nodePosition.id), X: \(nodePosition.x), Y: \(nodePosition.y), Z: \(nodePosition.z)")
+
             // Unwrap UIColor? first
             if let nodeColor = UIColor.from(colorName: colorName) {
                 let sphere = ModelEntity(mesh: .generateSphere(radius: 0.05), materials: [SimpleMaterial(color: nodeColor, isMetallic: false)])
-                sphere.position = SIMD3<Float>(x - spacing * Float(rowCount) / 2, y - spacing * Float(rowCount) / 2, -1)// @To-Do: design a placing algorithm
+                sphere.position = SIMD3<Float>(nodePosition.x, nodePosition.y, nodePosition.z)// the position comes from the backend networkX algorithm
                 sphere.addTextLabel(text: node.id, position: SIMD3<Float>(0, 0.1, 0))
                 let anchorEntity = AnchorEntity(world: SIMD3<Float>(0, 0, 0)) // @To-Do: design a placing algorithm
                 anchorEntity.addChild(sphere)
                 arView.scene.addAnchor(anchorEntity)
                 sphere.name = node.id // Set the name of the sphere
-                //print("Node id: \(node.id)")
             } else {
                 print("Could not find a matching color for name: \(graphDetails.node_colors[index])")
             }
