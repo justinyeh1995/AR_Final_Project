@@ -8,6 +8,7 @@
 import SwiftUI
 import ARKit
 import RealityKit
+import simd
 
 /// From ARKit
 struct ARViewContainer: UIViewRepresentable {
@@ -86,21 +87,34 @@ struct ARViewContainer: UIViewRepresentable {
         }
     }
 
+    
     // Example function to create a thin box to simulate a line
-    private func createLineEntity(from startPoint: SIMD3<Float>, to endPoint: SIMD3<Float>, thickness: Float) -> ModelEntity {
-        let length = simd_distance(startPoint, endPoint)
-        let direction = simd_normalize(endPoint - startPoint)
-        let midPoint = (startPoint + endPoint) / 2.0
+    private func createLineEntity(from startPoint: SIMD3<Float>, to endPoint: SIMD3<Float>, thickness: Float) -> AnchorEntity {
+        let lineVector = endPoint - startPoint
+        
+        // Calculate the midpoint where the line entity will be anchored
+        let midPoint = (startPoint + endPoint) / 2
+        
+        // Calculate the length of the line
+        let length = simd_length(lineVector)
+        
+        // Generate a thin box with the length of the line
+        let lineMesh = MeshResource.generateBox(size: [thickness, thickness, length])
+        
+        // Create a model entity with the generated mesh and a color material
+        let lineEntity = ModelEntity(mesh: lineMesh, materials: [SimpleMaterial(color: .red, isMetallic: false)])
+        
+        // The default orientation of the box is along the z-axis.
+        // Compute a quaternion that represents the rotation from the z-axis to the line vector
+        let rotationQuaternion = simd_quatf(from: SIMD3<Float>(0, 0, 1), to: simd_normalize(lineVector))
+        
+        // Create the line entity and set its transform
+        let lineAnchor = AnchorEntity(world: midPoint)
+        lineAnchor.addChild(lineEntity)
+        lineAnchor.orientation = rotationQuaternion
+        
+        return lineAnchor
 
-        let boxMesh = MeshResource.generateBox(width: thickness, height: thickness, depth: length)
-        let lineEntity = ModelEntity(mesh: boxMesh)
-        lineEntity.position = midPoint
-
-        // Calculate rotation to align the box with the direction vector
-        let rotation = simd_quatf(from: SIMD3<Float>(0, 0, 1), to: direction)
-        lineEntity.orientation = rotation
-
-        return lineEntity
     }
     
     private func createLinks(in arView: ARView, for graphDetails: GraphDetails) {
@@ -114,20 +128,13 @@ struct ARViewContainer: UIViewRepresentable {
             let sourcePosition = sourceNode.position
             let targetPosition = targetNode.position
             
-            print("Start Point \(sourcePosition) - End Point \(targetPosition)")
-            
+            print("Start Point \(sourceNode.name): \(sourcePosition) - End Point \(targetNode.name) \(targetPosition)")
             
             // Create the line entity using the createLineEntity method
             let lineThickness: Float = 0.005 // Adjust thickness as needed
             let lineEntity = createLineEntity(from: sourcePosition, to: targetPosition, thickness: lineThickness)
             
-            // Optionally, set the material color for the line
-            lineEntity.model?.materials = [SimpleMaterial(color: .red, isMetallic: false)]
-            
-            // Add the line entity to the scene by creating an anchor at the line's position
-            let anchorEntity = AnchorEntity(world: lineEntity.position)
-            anchorEntity.addChild(lineEntity)
-            arView.scene.addAnchor(anchorEntity)
+            arView.scene.addAnchor(lineEntity)
         }
     }
 }
