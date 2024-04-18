@@ -19,6 +19,10 @@ struct ContentView: View {
     @State private var graphData: GraphWrapper?
     @State private var gameID: String?
     @State private var isLoading = false
+    @State private var maxSteps = 10
+    @State private var currStep = 0
+    @State private var redAgent = "B_lineAgent"
+    @State private var blueAgent = "BlueRemove"
     
     var body: some View {
         VStack {
@@ -34,23 +38,26 @@ struct ContentView: View {
             Button("Start CybORG Simulation") {
                 Task {
                     isLoading = true
-                    let fetchedGameID = await fetchStartGame()
+                    let fetchedGameID = await fetchStartGame(blueAgent: blueAgent, redAgent: redAgent, maxSteps: maxSteps)
                     gameID = fetchedGameID
                     isLoading = false
                 }
             }
             Button("Next Step") {
                 Task {
-                    if let networkDataResponse = await fetchGraphData(gameID: gameID) {
+                    if currStep == maxSteps {
+                        print("End of game")
+                    } else if let networkDataResponse = await fetchGraphData(gameID: gameID) {
                         // Process the networkDataResponse here
                         graphData = networkDataResponse
+                        currStep += 1
                     } else {
                         print("Failed to fetch network data.")
                     }
                 }
             }
             Button("Previous Step") {
-            
+                
             }
             Button("End Simulation") {
                 Task {
@@ -63,6 +70,7 @@ struct ContentView: View {
                         }
                     }
                     graphData = nil // Clear graphData after backend responses
+                    currStep = 0 // Revert back to 0
                 }
             }
         }
@@ -70,7 +78,7 @@ struct ContentView: View {
     }
 }
 
-func fetchStartGame () async -> String? {
+func fetchStartGame (blueAgent: String, redAgent: String, maxSteps: Int) async -> String? {
         let urlString = "https://justinyeh1995.com/api/game/"
         //let urlString = "http://localhost:8000/api/game/"
 
@@ -83,7 +91,7 @@ func fetchStartGame () async -> String? {
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let body: [String: Any] = ["red_agent": "B_lineAgent", "step": 10, "blue_agent": "BlueRemove"]
+        let body: [String: Any] = ["red_agent": "B_lineAgent", "step": maxSteps, "blue_agent": "BlueRemove"]
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
             let (data, response) = try await URLSession.shared.data(for: request)
