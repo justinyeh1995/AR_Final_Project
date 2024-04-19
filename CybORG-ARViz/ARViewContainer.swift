@@ -60,15 +60,9 @@ struct ARViewContainer: UIViewRepresentable {
 
     private func createNodes(in arView: ARView, for graphDetails: GraphDetails) {
         print("---> In createNodes")
-        let rowCount = Int(sqrt(Double(graphDetails.link_diagram.nodes.count)))
-        let spacing: Float = 0.5 // space between nodes
+        let scale: Float = 0.5 // space between nodes
         
         for (index, node) in graphDetails.link_diagram.nodes.enumerated() {
-            let row = index / rowCount
-            let column = index % rowCount
-            
-            let x = Float(column) * spacing
-            let y = Float(row) * spacing
             
             let colorName = graphDetails.node_colors[index]
             let nodePosition = graphDetails.node_positions[index]
@@ -188,20 +182,3 @@ extension UIColor {
     }
 }
 
-extension MeshResource {
-    /// Generates a very thin box standing vertically along the Y-axis.
-    static func generateLine(from start: SIMD3<Float>, to end: SIMD3<Float>, radius: Float) -> MeshResource {
-        // Calculate the distance between the start and end points to determine the depth of the box.
-        let distance = simd_distance(start, end)
-        
-        // Use a very small value for width and height to make the box thin, like a line.
-        let width = radius  // This will serve as the "thickness" of the line.
-        let height = radius // Same as width to ensure the line's thickness is uniform.
-        
-        // Generate a box with the desired dimensions.
-        // The depth of the box will be equal to the distance between the start and end points.
-        let line = MeshResource.generateBox(width: width, height: height, depth: distance)
-        
-        return line
-    }
-}
