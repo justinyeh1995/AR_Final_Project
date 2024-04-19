@@ -28,53 +28,103 @@ struct ContentView: View {
         VStack {
             ARViewContainer(graphData: graphData)
                 .edgesIgnoringSafeArea(.all)
+            
+            // Display loading or game ID information
             if isLoading {
                 ProgressView()
             } else if let gameID = gameID {
-                Text("Game ID: \(gameID)")
+                //Text("Game ID: \(gameID) has started")
+                if currStep == maxSteps {
+                    Text("End of Game!")
+                }
+                Text("Game has started - Round: \(currStep)")
             } else {
-                Text("No Game ID fetched yet")
+                Text("No Game has started yet")
             }
-            Button("Start CybORG Simulation") {
-                Task {
-                    isLoading = true
-                    let fetchedGameID = await fetchStartGame(blueAgent: blueAgent, redAgent: redAgent, maxSteps: maxSteps)
-                    gameID = fetchedGameID
-                    isLoading = false
-                }
-            }
-            Button("Next Step") {
-                Task {
-                    if currStep == maxSteps {
-                        print("End of game")
-                    } else if let networkDataResponse = await fetchGraphData(gameID: gameID) {
-                        // Process the networkDataResponse here
-                        graphData = networkDataResponse
-                        currStep += 1
-                    } else {
-                        print("Failed to fetch network data.")
+            
+            // Control buttons grouped together
+            VStack {
+                // Game control buttons
+                HStack {
+                    Spacer()
+                    Button(action: startSimulation) {
+                        Image(systemName: "play.circle.fill")
+                            .resizable()
+                            .frame(width: 50, height: 50)
+                            .padding()
                     }
-                }
-            }
-            Button("Previous Step") {
-                
-            }
-            Button("End Simulation") {
-                Task {
-                    // Call the API to end the game
-                    let message = await fetchEndGame(gameID: gameID)
-                    if message != nil {
-                        // Reset gameID only on successful API call
-                        DispatchQueue.main.async {
-                            self.gameID = nil
-                        }
+                    .disabled(gameID != nil) // Disable this button if a gameID exists
+                    
+                    Spacer()
+                    Button(action: previousStep) {
+                        Image(systemName: "backward.fill")
+                            .resizable()
+                            .frame(width: 50, height: 50)
+                            .padding()
                     }
-                    graphData = nil // Clear graphData after backend responses
-                    currStep = 0 // Revert back to 0
+                    .disabled(gameID == nil || currStep <= 0) // Disable if no gameID or on the first step
+                    
+                    Spacer()
+                    Button(action: nextStep) {
+                        Image(systemName: "forward.fill")
+                            .resizable()
+                            .frame(width: 50, height: 50)
+                            .padding()
+                    }
+                    .disabled(gameID == nil || currStep >= maxSteps) // Disable if no gameID or reached max steps
+                    
+                    Spacer()
+                    Button(action: endSimulation) {
+                        Image(systemName: "stop.circle.fill")
+                            .resizable()
+                            .frame(width: 50, height: 50)
+                            .padding()
+                    }
+                    .disabled(gameID == nil) // Disable this button if no gameID exists
+                    
+                    Spacer()
                 }
             }
         }
-
+    }
+    
+    func startSimulation() {
+        Task {
+            isLoading = true
+            let fetchedGameID = await fetchStartGame(blueAgent: blueAgent, redAgent: redAgent, maxSteps: maxSteps)
+            gameID = fetchedGameID
+            isLoading = false
+        }
+    }
+    
+    func nextStep() {
+        Task {
+            if currStep == maxSteps {
+                print("End of game")
+            } else if let networkDataResponse = await fetchGraphData(gameID: gameID) {
+                graphData = networkDataResponse
+                currStep += 1
+            } else {
+                print("Failed to fetch network data.")
+            }
+        }
+    }
+    
+    func previousStep() {
+        // Implement previous step logic here
+    }
+    
+    func endSimulation() {
+        Task {
+            let message = await fetchEndGame(gameID: gameID)
+            if message != nil {
+                DispatchQueue.main.async {
+                    self.gameID = nil
+                }
+            }
+            graphData = nil
+            currStep = 0
+        }
     }
 }
 
