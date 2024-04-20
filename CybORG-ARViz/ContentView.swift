@@ -91,14 +91,18 @@ struct ContentView: View {
     func startSimulation() {
         Task {
             isLoading = true
+            
             let fetchedGameID = await fetchStartGame(blueAgent: blueAgent, redAgent: redAgent, maxSteps: maxSteps)
             gameID = fetchedGameID
+            
             isLoading = false
         }
     }
     
     func nextStep() {
         Task {
+            isLoading = true
+            
             if currStep == maxSteps {
                 print("End of game")
             } else if let networkDataResponse = await fetchGraphData(gameID: gameID) {
@@ -107,6 +111,8 @@ struct ContentView: View {
             } else {
                 print("Failed to fetch network data.")
             }
+            
+            isLoading = false
         }
     }
     
@@ -116,6 +122,8 @@ struct ContentView: View {
     
     func endSimulation() {
         Task {
+            isLoading = true
+            
             let message = await fetchEndGame(gameID: gameID)
             if message != nil {
                 DispatchQueue.main.async {
@@ -124,6 +132,8 @@ struct ContentView: View {
             }
             graphData = nil
             currStep = 0
+            
+            isLoading = false
         }
     }
 }
