@@ -6,22 +6,26 @@
 //
 
 import SwiftUI ///layout for the app
-import UIKit ///use for handling screen Actions
 import ARKit ///ARKit provides the real-world data and spatial context
 import RealityKit ///RealityKit handles rendering and interaction with virtual content
 import simd
+
 
 /// From ARKit
 struct ARViewContainer: UIViewRepresentable {
     typealias UIViewType = ARView
     
-    var graphData: GraphWrapper? // Assume this is your graph data model passed in from ContentView
-    // @To-Do: Group all the nodes and links together
-    
+    /// passed in from ContentView, must be in the same order as the param
+    var graphData: GraphWrapper?
+    var maxSteps: Int
+    var redAgent: String
+    var blueAgent: String
+        
+    /// makeUIView is called when an instance of view does not exist and it has to be created
     func makeUIView(context: Context) -> ARView {
         let arView = ARView(frame: .zero, cameraMode: .ar, automaticallyConfigureSession: true)
         arView.backgroundColor = .gray // Or any other noticeable color
-        arView.debugOptions = [.showFeaturePoints, .showWorldOrigin]
+        arView.debugOptions = [.showFeaturePoints, .showWorldOrigin] /// this is only used for debugging purpose
 
         // Start AR session configuration here
         let config = ARWorldTrackingConfiguration()
@@ -34,13 +38,14 @@ struct ARViewContainer: UIViewRepresentable {
         return arView
     }
 
+    /// updateUIView is called when view exists and it's state is changed
     func updateUIView(_ view: ARView, context: Context) {
         // Here, update the AR view with new or changed data
         print("Graph Data Changed!")
         updateContent(for: view, graphData: graphData)
-        view.debugOptions = [.showFeaturePoints, .showWorldOrigin]
     }
 
+    /// helper func that builds the view
     private func updateContent(for arView: ARView, graphData: GraphWrapper?) {
         print("--> In updateContent:")
 
@@ -49,7 +54,7 @@ struct ARViewContainer: UIViewRepresentable {
         
         
         // Create a new root anchor for this setup
-        let rootAnchor = AnchorEntity()
+        let rootAnchor = AnchorEntity(world: SIMD3<Float>(0, 0, 0))
         let parentModelEntity = ModelEntity()
         
         // Check and unwrap graphData
@@ -60,7 +65,11 @@ struct ARViewContainer: UIViewRepresentable {
             createNodes(in: arView, for: graphData.Red, parentModelEntity: parentModelEntity)
             createLinks(in: arView, for: graphData.Red, parentModelEntity: parentModelEntity)
             
+            parentModelEntity.addTextLabel(text:"System Settings :\n Max Rounds: \(maxSteps) / Red: \(redAgent) / Blue: \(blueAgent)",
+                                           position: SIMD3<Float>(-1.0, 1.25, 0), color: .red, size: 0.1)
             parentModelEntity.generateCollisionShapes(recursive: true)
+            parentModelEntity.scale = SIMD3<Float>(repeating: 0.08)
+
             rootAnchor.addChild(parentModelEntity)
             arView.scene.addAnchor(rootAnchor)
 
@@ -99,8 +108,16 @@ struct ARViewContainer: UIViewRepresentable {
             }
         }
     }
-
     
+    private func findEntity(named name: String, parentModelEntity: ModelEntity) -> Entity? {
+        for child in parentModelEntity.children {
+            if child.name == name {
+                return child
+            }
+        }
+        return nil
+    }
+
     private func createLineEntity(from startPoint: SIMD3<Float>, to endPoint: SIMD3<Float>, thickness: Float) -> ModelEntity {
         let lineVector = endPoint - startPoint
         
@@ -152,24 +169,15 @@ struct ARViewContainer: UIViewRepresentable {
             parentModelEntity.addChild(lineEntity)
         }
     }
-    
-    private func findEntity(named name: String, parentModelEntity: ModelEntity) -> Entity? {
-        for child in parentModelEntity.children {
-            if child.name == name {
-                return child
-            }
-        }
-        return nil
-    }
 }
 
 extension Entity {
     /// Creates and returns a text entity.
-    func createTextEntity(text: String, color: UIColor = .white) -> ModelEntity {
+    func createTextEntity(text: String, color: UIColor = .white, size: CGFloat = 0.04) -> ModelEntity {
         let mesh = MeshResource.generateText(
             text,
             extrusionDepth: 0.01,
-            font: .systemFont(ofSize: 0.04),
+            font: .systemFont(ofSize: size),
             containerFrame: CGRect.zero,
             alignment: .center,
             lineBreakMode: .byCharWrapping
@@ -179,8 +187,8 @@ extension Entity {
     }
 
     /// Adds a text label as a child to the entity.
-    func addTextLabel(text: String, position: SIMD3<Float>) {
-        let textEntity = createTextEntity(text: text)
+    func addTextLabel(text: String, position: SIMD3<Float>, color: UIColor = .white, size: CGFloat = 0.04) {
+        let textEntity = createTextEntity(text: text, color: color, size: size)
         textEntity.position = position
         textEntity.generateCollisionShapes(recursive: true)
         self.addChild(textEntity)
@@ -248,4 +256,5 @@ extension UIColor {
         }
     }
 }
+
 
