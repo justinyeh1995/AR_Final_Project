@@ -15,6 +15,7 @@ struct GameEndResponse: Codable {
     let message: String
 }
 
+/// Main Scene
 struct ContentView: View {
     @State private var graphData: GraphWrapper?
     @State private var gameID: String?
@@ -23,10 +24,12 @@ struct ContentView: View {
     @State private var currStep = 0
     @State private var redAgent = "B_lineAgent"
     @State private var blueAgent = "BlueRemove"
+    @State private var nodeInfoVisible = false
+    @State private var selectedNodeInfo: String = ""
     
     var body: some View {
         VStack {
-            ARViewContainer(graphData: graphData)
+            ARViewContainer(graphData: graphData, maxSteps: maxSteps, redAgent: redAgent, blueAgent: blueAgent)
                 .edgesIgnoringSafeArea(.all)
             
             // Display loading or game ID information
@@ -138,6 +141,8 @@ struct ContentView: View {
     }
 }
 
+/// Fetch Data from backend server
+/// Start Game
 func fetchStartGame (blueAgent: String, redAgent: String, maxSteps: Int) async -> String? {
         let urlString = "https://justinyeh1995.com/api/game/"
         //let urlString = "http://localhost:8000/api/game/"
@@ -171,7 +176,7 @@ func fetchStartGame (blueAgent: String, redAgent: String, maxSteps: Int) async -
         }
 }
 
-// Place your fetchGraphData function here
+/// Fetch Next Step
 func fetchGraphData(gameID: String?) async -> GraphWrapper? {
     guard let gameID = gameID else {
         print("Start Game first")
@@ -211,7 +216,7 @@ func fetchGraphData(gameID: String?) async -> GraphWrapper? {
     }
 }
 
-// Delete Game
+/// Delete Game
 func fetchEndGame(gameID: String?) async -> String? {
     guard let gameID = gameID else {
         print("Start Game first")
