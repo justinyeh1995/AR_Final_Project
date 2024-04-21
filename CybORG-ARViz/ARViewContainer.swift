@@ -16,7 +16,8 @@ struct ARViewContainer: UIViewRepresentable {
     typealias UIViewType = ARView
     
     var graphData: GraphWrapper? // Assume this is your graph data model passed in from ContentView
-        
+    // @To-Do: Group all the nodes and links together
+    
     func makeUIView(context: Context) -> ARView {
         let arView = ARView(frame: .zero, cameraMode: .ar, automaticallyConfigureSession: true)
         arView.backgroundColor = .gray // Or any other noticeable color
@@ -37,6 +38,7 @@ struct ARViewContainer: UIViewRepresentable {
         // Here, update the AR view with new or changed data
         print("Graph Data Changed!")
         updateContent(for: view, graphData: graphData)
+        view.debugOptions = [.showFeaturePoints, .showWorldOrigin]
     }
 
     private func updateContent(for arView: ARView, graphData: GraphWrapper?) {
@@ -45,33 +47,33 @@ struct ARViewContainer: UIViewRepresentable {
         // Remove all existing anchors to clear previous content
         arView.scene.anchors.removeAll()
         
+        
+        // Create a new root anchor for this setup
+        let rootAnchor = AnchorEntity()
+        let parentModelEntity = ModelEntity()
+        
         // Check and unwrap graphData
         if let graphData = graphData {
             print("----> compromised hosts is:\n")
             print(graphData.Red.compromised_hosts)
             // Create and add new nodes and links
-            createNodes(in: arView, for: graphData.Red)
-            createLinks(in: arView, for: graphData.Red)
-                        
-            for anchor in arView.scene.anchors {
-                // Assuming all entities you want to interact with are children of these anchors
-                for entity in anchor.children {
-                    // Safely check and cast to HasCollision before installing gestures
-                    if let hasCollisionEntity = entity as? HasCollision {
-                        // Enable default gestures for this entity if it supports collision
-                        arView.installGestures([.rotation, .translation, .scale], for: hasCollisionEntity)
-                    }
-                }
-            }
+            createNodes(in: arView, for: graphData.Red, parentModelEntity: parentModelEntity)
+            createLinks(in: arView, for: graphData.Red, parentModelEntity: parentModelEntity)
+            
+            parentModelEntity.generateCollisionShapes(recursive: true)
+            rootAnchor.addChild(parentModelEntity)
+            arView.scene.addAnchor(rootAnchor)
+
+            arView.installGestures([.all], for: parentModelEntity)
+            
         }
         else {
             print("empty graphData")
         }
     }
 
-    private func createNodes(in arView: ARView, for graphDetails: GraphDetails) {
+    private func createNodes(in arView: ARView, for graphDetails: GraphDetails, parentModelEntity: ModelEntity) {
         print("---> In createNodes")
-        let scale: Float = 0.5 // space between nodes
         
         for (index, node) in graphDetails.link_diagram.nodes.enumerated() {
             
@@ -91,9 +93,7 @@ struct ARViewContainer: UIViewRepresentable {
                 sphere.generateCollisionShapes(recursive: true)
                 sphere.name = node.id // Set the name of the sphere
                 
-                let anchorEntity = AnchorEntity(world: SIMD3<Float>(0, 0, 0)) // @To-Do: design a placing algorithm
-                anchorEntity.addChild(sphere)
-                arView.scene.addAnchor(anchorEntity)
+                parentModelEntity.addChild(sphere)
             } else {
                 print("Could not find a matching color for name: \(graphDetails.node_colors[index])")
             }
@@ -101,12 +101,8 @@ struct ARViewContainer: UIViewRepresentable {
     }
 
     
-    // Example function to create a thin box to simulate a line
-    private func createLineEntity(from startPoint: SIMD3<Float>, to endPoint: SIMD3<Float>, thickness: Float) -> AnchorEntity {
+    private func createLineEntity(from startPoint: SIMD3<Float>, to endPoint: SIMD3<Float>, thickness: Float) -> ModelEntity {
         let lineVector = endPoint - startPoint
-        
-        // Calculate the midpoint where the line entity will be anchored
-        let midPoint = (startPoint + endPoint) / 2
         
         // Calculate the length of the line
         let length = simd_length(lineVector)
@@ -117,24 +113,22 @@ struct ARViewContainer: UIViewRepresentable {
         // Create a model entity with the generated mesh and a color material
         let lineEntity = ModelEntity(mesh: lineMesh, materials: [SimpleMaterial(color: .red, isMetallic: false)])
         
-        lineEntity.generateCollisionShapes(recursive: true)
         // The default orientation of the box is along the z-axis.
         // Compute a quaternion that represents the rotation from the z-axis to the line vector
         let rotationQuaternion = simd_quatf(from: SIMD3<Float>(0, 0, 1), to: simd_normalize(lineVector))
         
-        // Create the line entity and set its transform
-        let lineAnchor = AnchorEntity(world: midPoint)
-        lineAnchor.addChild(lineEntity)
-        lineAnchor.orientation = rotationQuaternion
+        // Set the orientation of the line entity
+        lineEntity.orientation = rotationQuaternion
         
-        return lineAnchor
-
+        return lineEntity
     }
     
-    private func createLinks(in arView: ARView, for graphDetails: GraphDetails) {
+    private func createLinks(in arView: ARView, for graphDetails: GraphDetails, parentModelEntity: ModelEntity) {
         for link in graphDetails.link_diagram.links {
-            guard let sourceNode = arView.scene.findEntity(named: link.source),
-                  let targetNode = arView.scene.findEntity(named: link.target) else {
+            //guard let sourceNode = arView.scene.findEntity(named: link.source),
+            //      let targetNode = arView.scene.findEntity(named: link.target) else {
+            guard let sourceNode = findEntity(named: link.source, parentModelEntity: parentModelEntity),
+                  let targetNode = findEntity(named: link.target, parentModelEntity: parentModelEntity) else {
                 print("Could not find nodes for link: \(link.source) to \(link.target)")
                 continue
             }
@@ -149,12 +143,18 @@ struct ARViewContainer: UIViewRepresentable {
             let lineThickness: Float = 0.005 // Adjust thickness as needed
             let lineEntity = createLineEntity(from: sourcePosition, to: targetPosition, thickness: lineThickness)
             
-            arView.scene.addAnchor(lineEntity)
+            // Calculate the midpoint between the source and target positions
+            let midPoint = (sourcePosition + targetPosition) / 2
+            
+            // Set the position of the line entity relative to the parent ModelEntity
+            lineEntity.position = midPoint
+            
+            parentModelEntity.addChild(lineEntity)
         }
     }
     
-    private func findEntity(named name: String, in rootAnchor: AnchorEntity) -> Entity? {
-        for child in rootAnchor.children {
+    private func findEntity(named name: String, parentModelEntity: ModelEntity) -> Entity? {
+        for child in parentModelEntity.children {
             if child.name == name {
                 return child
             }
@@ -218,6 +218,7 @@ extension Entity {
     func addCharacter(node_id: String, position: SIMD3<Float>) {
         if let modelEntity = createModelEntity(node_id: node_id) {
             modelEntity.position = position
+            modelEntity.availableAnimations.forEach{modelEntity.playAnimation($0.repeat())}
             self.addChild(modelEntity)
         } else {
             print("Model entity could not be created for node_id \(node_id).")
