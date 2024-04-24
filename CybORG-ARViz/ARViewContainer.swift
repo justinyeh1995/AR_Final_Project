@@ -25,7 +25,7 @@ struct ARViewContainer: UIViewRepresentable {
     func makeUIView(context: Context) -> ARView {
         let arView = ARView(frame: .zero, cameraMode: .ar, automaticallyConfigureSession: true)
         arView.backgroundColor = .gray // Or any other noticeable color
-        arView.debugOptions = [.showFeaturePoints, .showWorldOrigin] /// this is only used for debugging purpose
+        //arView.debugOptions = [.showFeaturePoints, .showWorldOrigin] /// this is only used for debugging purpose
 
         // Start AR session configuration here
         let config = ARWorldTrackingConfiguration()
@@ -51,7 +51,6 @@ struct ARViewContainer: UIViewRepresentable {
 
         // Remove all existing anchors to clear previous content
         arView.scene.anchors.removeAll()
-        
         
         // Create a new root anchor for this setup
         let rootAnchor = AnchorEntity(world: SIMD3<Float>(0, 0, 0))
@@ -89,7 +88,7 @@ struct ARViewContainer: UIViewRepresentable {
             let colorName = graphDetails.node_colors[index]
             let nodePosition = graphDetails.node_positions[index]
 
-            print("Node ID: \(nodePosition.id), X: \(nodePosition.x), Y: \(nodePosition.y), Z: \(nodePosition.z)")
+            print("Node ID: \(nodePosition.id), Color: \(colorName), X: \(nodePosition.x), Y: \(nodePosition.y), Z: \(nodePosition.z)")
 
             // Unwrap UIColor? first
             if let nodeColor = UIColor.from(colorName: colorName) {
@@ -212,6 +211,7 @@ extension Entity {
         // Attempt to load the model from the filename, and return the result
         do {
             let modelEntity = try ModelEntity.loadModel(named: "\(fileName).\(fileExtension)")
+            modelEntity.name = fileName
             // Scale down the model. For example, 0.5 would make the model half its original size.
             let scale: Float = 0.2 // Adjust the scale factor as needed
             modelEntity.scale = SIMD3<Float>(repeating: scale)
@@ -245,7 +245,7 @@ extension UIColor {
         case "blue":
             return UIColor.blue
         case "pink":
-            return UIColor.systemPink
+            return UIColor(red: 1.0, green: 0.4, blue: 0.8, alpha: 1.0)
         case "orange":
             return UIColor.orange
         case "rosybrown":
