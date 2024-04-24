@@ -30,7 +30,7 @@ struct NodePosition: Codable {
 
 struct ActionInfo: Codable {
     let action: String
-    let success: String
+    let success: Bool
 }
 
 struct Border: Codable {
