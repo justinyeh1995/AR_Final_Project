@@ -37,14 +37,32 @@ struct ContentView: View {
                 ProgressView()
             } else if let gameID = gameID {
                 //Text("Game ID: \(gameID) has started")
-                if currStep == maxSteps {
-                    Text("End of Game!")
+                if currStep == 0 {
+                    VStack {
+                        Text("Initailized Game: \(gameID)\n")
+                            .font(.subheadline)
+                        Text("Click Next to Play")
+                            .font(.title)
+                    }
+                } else {
+                    if currStep == maxSteps {
+                        Text("Reached Round \(currStep), End of Game!")
+                            .font(.title)
+                    } else {
+                        Text("Round: \(currStep)") .font(.title)
+                    }
+                    if let graphData {
+                        Spacer()
+                        ObservationInfoView(red_info: graphData.Red.action_info,
+                                            blue_info: graphData.Blue.action_info)
+                    }
                 }
-                Text("Game has started - Round: \(currStep)")
             } else {
                 Text("No Game has started yet")
+                    .font(.title)
             }
             
+
             // Control buttons grouped together
             VStack {
                 // Game control buttons
