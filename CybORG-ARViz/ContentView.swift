@@ -22,6 +22,7 @@ struct ContentView: View {
     @State private var isLoading = false
     @State private var maxSteps = 10
     @State private var currStep = 0
+    @State private var latestStep = 0
     @State private var redAgent = "B_lineAgent"
     @State private var blueAgent = "BlueRemove"
     @State private var nodeInfoVisible = false
@@ -123,22 +124,42 @@ struct ContentView: View {
     func nextStep() {
         Task {
             isLoading = true
-            
-            if currStep == maxSteps {
-                print("End of game")
-            } else if let networkDataResponse = await fetchGraphData(gameID: gameID) {
-                graphData = networkDataResponse
+            defer { isLoading = false }
+
+            let networkDataResponse: GraphWrapper?
+            if currStep == latestStep {
+                // Ensure to use try await with a throwing async function
+                networkDataResponse = await fetchNextGraphData(gameID: gameID)
+                latestStep += 1
+            } else {
+                // Ensure to use try await with a throwing async function
+                networkDataResponse = await fetchHistoryGraphData(gameID: gameID, step: currStep + 1)
+            }
+
+            if let data = networkDataResponse {
+                graphData = data
                 currStep += 1
+            } else {
+                print("Failed to fetch network data.")
+            }
+            
+        }
+    }
+    
+    func previousStep() {
+        // Implement previous step logic here
+        Task {
+            isLoading = true
+            
+            if let networkDataResponse = await fetchHistoryGraphData(gameID: gameID, step: currStep-1) {
+                graphData = networkDataResponse
+                currStep -= 1
             } else {
                 print("Failed to fetch network data.")
             }
             
             isLoading = false
         }
-    }
-    
-    func previousStep() {
-        // Implement previous step logic here
     }
     
     func endSimulation() {
@@ -153,7 +174,7 @@ struct ContentView: View {
             }
             graphData = nil
             currStep = 0
-            
+            latestStep = 0
             isLoading = false
         }
     }
@@ -162,8 +183,8 @@ struct ContentView: View {
 /// Fetch Data from backend server
 /// Start Game
 func fetchStartGame (blueAgent: String, redAgent: String, maxSteps: Int) async -> String? {
-        let urlString = "https://justinyeh1995.com/api/game/"
-        //let urlString = "http://localhost:8000/api/game/"
+        let urlString = "https://justinyeh1995.com/api/games/start"
+        //let urlString = "http://localhost:8000/api/games/start"
 
         guard let url = URL(string: urlString) else {
             print("Invalid URL")
@@ -195,14 +216,14 @@ func fetchStartGame (blueAgent: String, redAgent: String, maxSteps: Int) async -
 }
 
 /// Fetch Next Step
-func fetchGraphData(gameID: String?) async -> GraphWrapper? {
+func fetchNextGraphData(gameID: String?) async -> GraphWrapper? {
     guard let gameID = gameID else {
         print("Start Game first")
         return nil
     }
     
-    let urlString = "https://justinyeh1995.com/api/game/" + gameID
-    //let urlString = "http://localhost:8000/api/game/" + gameID
+    let urlString = "https://justinyeh1995.com/api/games/" + gameID
+    //let urlString = "http://localhost:8000/api/games/" + gameID
 
     guard let url = URL(string: urlString) else {
         print("Invalid URL")
@@ -234,6 +255,46 @@ func fetchGraphData(gameID: String?) async -> GraphWrapper? {
     }
 }
 
+/// Get Step
+func fetchHistoryGraphData(gameID: String?, step: Int) async -> GraphWrapper? {
+    guard let gameID = gameID else {
+        print("Start Game first")
+        return nil
+    }
+    
+    let urlString = "https://justinyeh1995.com/api/games/\(gameID)/step/\(step)"
+    //let urlString = "http://localhost:8000/api/games/" + gameID
+
+    guard let url = URL(string: urlString) else {
+        print("Invalid URL")
+        return nil
+    }
+    
+    var request = URLRequest(url: url)
+    request.httpMethod = "GET"
+
+    do {
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            print("Error: HTTP status code is not 200")
+            return nil
+        }
+        
+        // Directly decode using the 'data' received from the network request
+        do {
+            let decoder = JSONDecoder()
+            let responseData = try decoder.decode(GraphWrapper.self, from: data)
+            return responseData
+        } catch {
+            print("Decoding failed with error: \(error)")
+            return nil
+        }
+    } catch {
+        print("Networking or Decoding Error: \(error.localizedDescription)")
+        return nil
+    }
+}
+
 /// Delete Game
 func fetchEndGame(gameID: String?) async -> String? {
     guard let gameID = gameID else {
@@ -241,8 +302,8 @@ func fetchEndGame(gameID: String?) async -> String? {
         return nil
     }
     
-    let urlString = "https://justinyeh1995.com/api/game/" + gameID
-    //let urlString = "http://localhost:8000/api/game/" + gameID
+    let urlString = "https://justinyeh1995.com/api/games/" + gameID
+    //let urlString = "http://localhost:8000/api/games/" + gameID
 
     guard let url = URL(string: urlString) else {
         print("Invalid URL")
