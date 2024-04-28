@@ -59,8 +59,8 @@
 		443D90DC2BBA2208008419FE /* CybORG_ARVizUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CybORG_ARVizUITests.swift; sourceTree = "<group>"; };
 		443D90DE2BBA2208008419FE /* CybORG_ARVizUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CybORG_ARVizUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		44BF3C812BD865E0004FCDD6 /* ObservationInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservationInfo.swift; sourceTree = "<group>"; };
-		44F707ED2BD45E0000257559 /* blue_hacker.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; name = blue_hacker.usdz; path = ../../../Downloads/blue_hacker.usdz; sourceTree = "<group>"; };
-		44F707F12BD45E7900257559 /* red_hacker.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; name = red_hacker.usdz; path = ../../red_hacker.usdz; sourceTree = "<group>"; };
+		44F707ED2BD45E0000257559 /* blue_hacker.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = blue_hacker.usdz; sourceTree = "<group>"; };
+		44F707F12BD45E7900257559 /* red_hacker.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = red_hacker.usdz; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
