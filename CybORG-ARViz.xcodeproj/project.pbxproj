@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4400884D2BD5B0AE0037EA8A /* NetworkStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4400884C2BD5B0AE0037EA8A /* NetworkStateManager.swift */; };
+		4400884F2BD5B1F20037EA8A /* ARViewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4400884E2BD5B1F20037EA8A /* ARViewCoordinator.swift */; };
+		440088512BD5B3D00037EA8A /* NodeInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440088502BD5B3D00037EA8A /* NodeInfoView.swift */; };
 		4411D90A2BBB45B10058BD76 /* ARViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4411D9092BBB45B10058BD76 /* ARViewContainer.swift */; };
 		4411D9102BBB54130058BD76 /* GraphWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4411D90F2BBB54130058BD76 /* GraphWrapper.swift */; };
 		443D90C22BBA2205008419FE /* CybORG_ARVizApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443D90C12BBA2205008419FE /* CybORG_ARVizApp.swift */; };
@@ -16,6 +19,9 @@
 		443D90D32BBA2208008419FE /* CybORG_ARVizTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443D90D22BBA2208008419FE /* CybORG_ARVizTests.swift */; };
 		443D90DD2BBA2208008419FE /* CybORG_ARVizUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443D90DC2BBA2208008419FE /* CybORG_ARVizUITests.swift */; };
 		443D90DF2BBA2208008419FE /* CybORG_ARVizUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443D90DE2BBA2208008419FE /* CybORG_ARVizUITestsLaunchTests.swift */; };
+		44BF3C822BD865E0004FCDD6 /* ObservationInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BF3C812BD865E0004FCDD6 /* ObservationInfo.swift */; };
+		44F707EE2BD45E0100257559 /* blue_hacker.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 44F707ED2BD45E0000257559 /* blue_hacker.usdz */; };
+		44F707F22BD45E7900257559 /* red_hacker.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 44F707F12BD45E7900257559 /* red_hacker.usdz */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +42,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4400884C2BD5B0AE0037EA8A /* NetworkStateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkStateManager.swift; sourceTree = "<group>"; };
+		4400884E2BD5B1F20037EA8A /* ARViewCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewCoordinator.swift; sourceTree = "<group>"; };
+		440088502BD5B3D00037EA8A /* NodeInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeInfoView.swift; sourceTree = "<group>"; };
 		4411D9092BBB45B10058BD76 /* ARViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewContainer.swift; sourceTree = "<group>"; };
 		4411D90F2BBB54130058BD76 /* GraphWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphWrapper.swift; sourceTree = "<group>"; };
 		4411D9112BBB5BFD0058BD76 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -49,6 +58,9 @@
 		443D90D82BBA2208008419FE /* CybORG-ARVizUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "CybORG-ARVizUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		443D90DC2BBA2208008419FE /* CybORG_ARVizUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CybORG_ARVizUITests.swift; sourceTree = "<group>"; };
 		443D90DE2BBA2208008419FE /* CybORG_ARVizUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CybORG_ARVizUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		44BF3C812BD865E0004FCDD6 /* ObservationInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservationInfo.swift; sourceTree = "<group>"; };
+		44F707ED2BD45E0000257559 /* blue_hacker.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; name = blue_hacker.usdz; path = ../../../Downloads/blue_hacker.usdz; sourceTree = "<group>"; };
+		44F707F12BD45E7900257559 /* red_hacker.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; name = red_hacker.usdz; path = ../../red_hacker.usdz; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,8 +115,14 @@
 				443D90C12BBA2205008419FE /* CybORG_ARVizApp.swift */,
 				443D90C32BBA2205008419FE /* ContentView.swift */,
 				4411D9092BBB45B10058BD76 /* ARViewContainer.swift */,
+				4400884E2BD5B1F20037EA8A /* ARViewCoordinator.swift */,
+				440088502BD5B3D00037EA8A /* NodeInfoView.swift */,
+				44BF3C812BD865E0004FCDD6 /* ObservationInfo.swift */,
 				4411D90F2BBB54130058BD76 /* GraphWrapper.swift */,
+				4400884C2BD5B0AE0037EA8A /* NetworkStateManager.swift */,
 				443D90C52BBA2208008419FE /* Assets.xcassets */,
+				44F707F12BD45E7900257559 /* red_hacker.usdz */,
+				44F707ED2BD45E0000257559 /* blue_hacker.usdz */,
 				443D90C72BBA2208008419FE /* Preview Content */,
 			);
 			path = "CybORG-ARViz";
@@ -239,8 +257,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				44F707EE2BD45E0100257559 /* blue_hacker.usdz in Resources */,
 				443D90C92BBA2208008419FE /* Preview Assets.xcassets in Resources */,
 				443D90C62BBA2208008419FE /* Assets.xcassets in Resources */,
+				44F707F22BD45E7900257559 /* red_hacker.usdz in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,6 +285,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				44BF3C822BD865E0004FCDD6 /* ObservationInfo.swift in Sources */,
+				4400884D2BD5B0AE0037EA8A /* NetworkStateManager.swift in Sources */,
+				4400884F2BD5B1F20037EA8A /* ARViewCoordinator.swift in Sources */,
+				440088512BD5B3D00037EA8A /* NodeInfoView.swift in Sources */,
 				443D90C42BBA2205008419FE /* ContentView.swift in Sources */,
 				4411D9102BBB54130058BD76 /* GraphWrapper.swift in Sources */,
 				443D90C22BBA2205008419FE /* CybORG_ARVizApp.swift in Sources */,
