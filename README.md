@@ -25,13 +25,16 @@ To run the app on your device, follow these steps:
 6. Scaling of the network within the scene is supported. You can zoom in or out to adjust the size of the network.
 7. Press the end ⏹️ button to end the current game.
 
-Please note that user sessions are not currently supported.
-
 ## Video Demonstration
 
 [Youtube Link](https://youtu.be/E2JiSItib-Q?si=q2yf9qpUFhBArBvd)
 
 https://github.com/justinyeh1995/CybORG-ARViz/assets/42970023/2b8e19d8-1ccc-44fe-86a1-a7e5f4a06bb3
+
+## Limitations
+
+1. User sessions: Please note that user sessions are not currently supported. This means that the app does not store or track individual user data or progress.
+2. Interaction with 3D characters and nodes: At the moment, there is no interaction available with the 3D characters and nodes within the app. Users can view the network and its components, but cannot directly interact with individual elements.
 
 ## Project Description
 
