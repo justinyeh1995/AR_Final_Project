@@ -84,7 +84,7 @@ struct ContentView: View {
                             .frame(width: 50, height: 50)
                             .padding()
                     }
-                    .disabled(gameID == nil || currStep <= 0) // Disable if no gameID or on the first step
+                    .disabled(gameID == nil || currStep <= 1) // Disable if no gameID or on the first step
                     
                     Spacer()
                     Button(action: nextStep) {
