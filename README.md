@@ -59,7 +59,7 @@ https://github.com/justinyeh1995/CybORG-live/blob/main/src/api/v1/CybORG/CybORG/
 2. Adaptive Display for Detailed Analysis: The application will enable users to scale and manipulate the spatial visualization of game results, accommodating the need for detailed analysis without being constrained by the screen size limitations of iPhones and iPads.
 
 
-### 4. Class Diagram of Important Components
+### 4. Class Diagrams for Important Components
 
 `ContentView.swift`
 
