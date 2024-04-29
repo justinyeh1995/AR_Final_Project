@@ -15,10 +15,6 @@ To run the app on your device, follow these steps:
 ![326292281-fab07077-90c8-454d-924a-defe0b03a34c 2](https://github.com/justinyeh1995/CybORG-ARViz/assets/42970023/a45e956f-cf2c-4b92-9948-e0802f0c2914)
 
 
-## Video Demonstration
-
-[Youtube Link](https://youtu.be/E2JiSItib-Q?si=q2yf9qpUFhBArBvd)
-
 ## App Procedure
 
 1. Press the start ▶ button to initialize a new game. If the game is successfully initialized, an ID will be displayed.
@@ -30,6 +26,10 @@ To run the app on your device, follow these steps:
 7. Press the end ⏹️ button to end the current game.
 
 Please note that user sessions are not currently supported.
+
+## Video Demonstration
+
+[Youtube Link](https://youtu.be/E2JiSItib-Q?si=q2yf9qpUFhBArBvd)
 
 https://github.com/justinyeh1995/CybORG-ARViz/assets/42970023/2b8e19d8-1ccc-44fe-86a1-a7e5f4a06bb3
 
