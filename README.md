@@ -27,7 +27,9 @@ To run the app on your device, follow these steps:
 
 ## Video Demonstration
 
-[Youtube Link](https://youtu.be/E2JiSItib-Q?si=q2yf9qpUFhBArBvd)
+### Full Video
+Youtube: https://youtu.be/MSxnLXjdzDI
+Box: https://vanderbilt.box.com/s/i5eiij62lqt39493w4iml2tfmoo6orrw
 
 https://github.com/justinyeh1995/CybORG-ARViz/assets/42970023/2b8e19d8-1ccc-44fe-86a1-a7e5f4a06bb3
 
