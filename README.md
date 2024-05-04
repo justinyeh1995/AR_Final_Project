@@ -27,10 +27,11 @@ To run the app on your device, follow these steps:
 
 ## Video Demonstration
 
-### Full Video
-Youtube: https://youtu.be/MSxnLXjdzDI
-Box: https://vanderbilt.box.com/s/i5eiij62lqt39493w4iml2tfmoo6orrw
+### Full Video 🎥
+- Youtube: https://youtu.be/MSxnLXjdzDI
 
+#### Rotate - Translate - Scale
+  
 https://github.com/justinyeh1995/CybORG-ARViz/assets/42970023/2b8e19d8-1ccc-44fe-86a1-a7e5f4a06bb3
 
 ## Limitations
